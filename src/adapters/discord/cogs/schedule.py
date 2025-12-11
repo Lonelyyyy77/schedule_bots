@@ -7,7 +7,6 @@ import datetime
 import discord
 from discord.ext import commands
 
-# (!) Эти импорты должны существовать. Ниже дам заглушки, если их нет.
 from src.core.url_store import set_user_url, load_urls
 from src.core.storage import get_user_schedule_file
 from src.core.parser import download_schedule
@@ -24,7 +23,6 @@ class ScheduleButtons(discord.ui.View):
 
     @discord.ui.button(label="← Вчера", style=discord.ButtonStyle.secondary)
     async def prev_day(self, interaction: discord.Interaction, button: discord.ui.Button):
-        # Проверка, что нажимает владелец панели
         if interaction.user.id != self.user_id:
             await interaction.response.send_message("Эта панель не для вас.", ephemeral=True)
             return
@@ -70,7 +68,7 @@ class ScheduleCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.waiting_for_file: dict[int, bool] = {}
-        self.waiting_for_url: dict[int, bool] = {}  # перенесли из глобальной переменной
+        self.waiting_for_url: dict[int, bool] = {}
 
     @commands.command()
     async def start(self, ctx: commands.Context):
@@ -86,7 +84,6 @@ class ScheduleCog(commands.Cog):
 
     @commands.command(name="seturl")
     async def seturl(self, ctx: commands.Context, url: str):
-        # простая валидация
         if not url.startswith(("http://", "https://")):
             await ctx.send("❗ Укажи корректный URL, например: https://example.com/schedule.csv")
             return
@@ -109,7 +106,7 @@ class ScheduleCog(commands.Cog):
                 if os.path.exists(file_path):
                     os.remove(file_path)
 
-                # Ожидаем, что download_schedule — async (иначе убрать await)
+                 download_schedule — async (иначе убрать await)
                 await download_schedule(url, file_path)
 
                 await msg.edit(content="✅ Расписание обновлено.")
@@ -117,7 +114,6 @@ class ScheduleCog(commands.Cog):
                 await msg.edit(content=f"❌ Ошибка:\n{e}")
             return
 
-        # если ссылки нет — запросим у пользователя
         self.waiting_for_url[user_id] = True
         await ctx.send("Вставьте ссылку на расписание в следующем сообщении.")
 
@@ -134,7 +130,6 @@ class ScheduleCog(commands.Cog):
         user_id = message.author.id
         content = (message.content or "").strip()
 
-        # Обработка ссылки, если ждём её
         if self.waiting_for_url.get(user_id):
             file_path = get_user_schedule_file(user_id)
             url = content
@@ -154,11 +149,8 @@ class ScheduleCog(commands.Cog):
                 await msg.edit(content=f"❌ Ошибка:\n{e}")
 
             self.waiting_for_url[user_id] = False
-            # не возвращаемся сразу, позволяем командам обработаться
-            # но безопаснее всё же return после update
             # return
 
-        # Обработка ожидаемого файла
         if self.waiting_for_file.get(user_id) and message.attachments:
             attachment = message.attachments[0]
             filename = (attachment.filename or "").lower()
@@ -168,7 +160,7 @@ class ScheduleCog(commands.Cog):
             else:
                 try:
                     file_bytes = await attachment.read()
-                    # можно добавить ограничение размера
+
                     if len(file_bytes) > 5 * 1024 * 1024:
                         await message.channel.send("❗ Файл слишком большой (>5MB).")
                     else:
@@ -187,7 +179,6 @@ class ScheduleCog(commands.Cog):
             self.waiting_for_file[user_id] = False
             # return
 
-        # Автоматическая загрузка одиночного CSV (без режима ожидания)
         if message.attachments and not self.waiting_for_file.get(user_id):
             attachment = message.attachments[0]
             filename = (attachment.filename or "").lower()
@@ -208,7 +199,6 @@ class ScheduleCog(commands.Cog):
                     await message.channel.send(f"❌ Ошибка:\n{e}")
                 # return
 
-        # ВАЖНО: чтобы команды с префиксом продолжали работать
         await self.bot.process_commands(message)
 
     @commands.command()
@@ -216,7 +206,7 @@ class ScheduleCog(commands.Cog):
         user_id = ctx.author.id
         today = datetime.date.today()
         text = await get_schedule_data_for_day(today, user_id)
-        # Кнопки
+
         await ctx.send(f"**{today.isoformat()}**\n\n{text}", view=ScheduleButtons(user_id, today))
 
     @commands.command()
