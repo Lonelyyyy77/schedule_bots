@@ -76,9 +76,9 @@ class ScheduleCog(commands.Cog):
             "Polecenia:\n"
             "`!today` — plan na dziś\n"
             "`!tomorrow` — plan na jutro\n"
-            "`!seturl <url>` — zapisz link\n"
+            "`!seturl <url>` — zapisz link z Harmonogramow\n"
             "`!update` — pobierz plan z zapisanego linku\n"
-            "`!upload` — prześlij ręcznie plik .csv\n"
+            "`!upload` — prześlij ręcznie plik .csv z Harmonogramow\n"
         )
 
     @commands.command()
