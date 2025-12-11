@@ -4,4 +4,4 @@ buildCommand = "python -m pip install -r requirements.txt && python -m playwrigh
 
 [deploy]
 preDeployCommand = "python -m playwright install"
-startCommand = "python -m src.run_both"
+startCommand = "python -m src.ds_bot"
