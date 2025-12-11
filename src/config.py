@@ -14,7 +14,6 @@ load_dotenv(dotenv_path=ENV_PATH)
 # print("TOKEN:", settings.telegram_token)
 
 
-# Определение путей проекта
 PROJECT_ROOT: Path = Path(__file__).resolve().parents[1]
 SRC_DIR: Path = PROJECT_ROOT / "src"
 CORE_DIR: Path = SRC_DIR / "core"
