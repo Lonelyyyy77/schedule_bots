@@ -9,7 +9,7 @@ from src.config import settings
 
 def create_discord_bot() -> commands.Bot:
     intents = discord.Intents.default()
-    intents.message_content = True  # нужно для чтения сообщений
+    intents.message_content = True  
 
     bot = commands.Bot(
         command_prefix="/",
@@ -23,7 +23,6 @@ async def start_discord_bot():
 
     bot = create_discord_bot()
 
-    # Подключаем Cogs
     from .cogs.schedule import ScheduleCog
     await bot.add_cog(ScheduleCog(bot))
 
