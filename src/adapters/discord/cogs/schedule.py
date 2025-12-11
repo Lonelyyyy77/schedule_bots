@@ -194,6 +194,9 @@ class ScheduleCog(commands.Cog):
                 except Exception as e:
                     await message.channel.send(f"❌ Błąd:\n{e}")
 
+        if message.content.startswith(("!", "/")):
+            return
+        
         await self.bot.process_commands(message)
 
     @commands.command()
